@@ -1,0 +1,98 @@
+//@version=3
+study("Opening high/low", overlay=true)
+hours_number_to_proccess = input(defval=65, title='Analyzed period (Number of hours)', type=integer, minval=10, maxval=500, step=1)
+current_margin = input(defval=0, title='Current Maintenance', type=integer, minval=0, maxval=10000000, step=1)
+
+milsecs_number_to_proccess = hours_number_to_proccess * 3600 * 1000
+bar_length = time - time[1]
+bars_amount_to_use = 1*milsecs_number_to_proccess / bar_length
+
+divided_margin = current_margin / 25.0
+quater_of_divided = divided_margin / 4.0
+half_of_devided = divided_margin / 2.0
+
+find_min() =>
+    current_bar_time = time
+    time_now = timenow
+    
+    current_min = if time_now < current_bar_time + bar_length
+        temp_min = low 
+        
+        val = for counter = 0 to bars_amount_to_use
+            temp_min := if temp_min > low[counter]
+                low[counter]
+            else
+                temp_min
+            
+            temp_min
+        
+        val
+        
+    current_min    
+    
+find_max() =>
+    current_bar_time = time
+    time_now = timenow
+    
+    current_max = if time_now < current_bar_time + bar_length
+        temp_max = high 
+        
+        val = for counter = 0 to bars_amount_to_use
+            temp_max := if temp_max < high[counter]
+                high[counter]
+            else
+                temp_max
+            
+            temp_max
+        
+        val
+        
+    current_max   
+
+series_to_int(series_value) => 
+    func_var_int = 0 // cast as integer 
+    //make mutable 
+    func_var_int := floor(series_value) 
+    //func_var_int := round(func_var_int)
+
+    func_var_int
+
+current_max = find_max()
+current_min = find_min()
+    
+min_level_100_min = current_min + divided_margin - 30
+min_level_100_max = current_min + divided_margin + 30
+
+min_level_50_min = current_min + half_of_devided - 15
+min_level_50_max = current_min + half_of_devided + 15
+
+min_level_25_min = current_min + quater_of_divided - 10
+min_level_25_max = current_min + quater_of_divided + 10
+
+
+max_level_100_min = current_max + divided_margin - 30
+max_level_100_max = current_max + divided_margin + 30
+
+max_level_50_min = current_max + half_of_devided - 15
+max_level_50_max = current_max + half_of_devided + 15
+
+max_level_25_min = current_max + quater_of_divided - 10
+max_level_25_max = current_max + quater_of_divided + 10
+
+h1 = plot(max_level_25_max, trackprice = true, linewidth = 3, color=#00FF11)
+h2 = plot(max_level_25_min, trackprice = true, linewidth = 3, color=#00FF11)
+
+h3 = plot(max_level_50_min, trackprice = true, linewidth = 3, color=#058D0E)
+h4 = plot(max_level_50_max, trackprice = true, linewidth = 3, color=#058D0E)
+
+h5 = plot(max_level_100_max, trackprice = true, linewidth = 3, color=#004B05)
+h6 = plot(max_level_100_min, trackprice = true, linewidth = 3, color=#004B05)
+
+h7 = plot(min_level_25_max, trackprice = true, linewidth = 3, color = #FF8484)
+h8 = plot(min_level_25_min, trackprice = true, linewidth = 3, color = #FF8484)
+
+h9 = plot(min_level_50_min, trackprice = true, linewidth = 3, color = #FF2F2F)
+h10 = plot(min_level_50_max, trackprice = true, linewidth = 3, color = #FF2F2F)
+
+h11 = plot(min_level_100_max, trackprice = true, linewidth = 3, color = #AC0000)
+h12 = plot(min_level_100_min, trackprice = true, linewidth = 3, color = #AC0000)
